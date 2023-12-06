@@ -14,6 +14,50 @@ def adjacent(y, x, schematic):
 
     return False
 
+valids = []
+
+def generate_valids():
+    global valids
+    a = np.array([[1, 1, 1], [0, 0, 0], [1, 1, 1]], dtype=int)
+    valids.append(a)
+
+    b = np.array([[1, 1, 0], [0, 0, 0], [1, 1, 1]], dtype=int)
+    b1 = np.flip(b, 1)
+    b2 = np.flip(b, 0)
+    b3 = np.flip(b)
+    valids.append(b)
+    valids.append(b1)
+    valids.append(b2)
+    valids.append(b3)
+
+    c = np.array([[1, 0, 0], [0, 0, 0], [1, 1, 1]], dtype=int)
+    c1 = np.flip(c, 1)
+    c2 = np.flip(c, 0)
+    c3 = np.flip(c)
+    valids.append(c)
+    valids.append(c1)
+    valids.append(c2)
+    valids.append(c3)
+
+    d = np.array([[1, 1, 0], [0, 0, 0], [1, 1, 0]], dtype=int)
+    d1 = np.flip(d, 1)
+
+
+    valids.append(d)
+    valids.append(d1)
+
+    e = np.array([[1, 0, 0], [0, 0, 0], [1, 1, 0]], dtype=int)
+    e1 = np.flip(e, 1)
+    e2 = np.flip(e, 0)
+    e3 = np.flip(e)
+
+    #print(e)
+    #print(e1)
+    #print(e2)
+    #print(e3)
+
+
+
 def adjacent2(y, x, schematic):
     '''
     [1 0 0] [0 1 0]   [1 1 0]  [1 1 1]
@@ -25,7 +69,7 @@ def adjacent2(y, x, schematic):
     [1 1 1] [0 0 0]  [0 0 0]   [0 0 0]   [1 0 0]   [1 0 1]
 
 Valid Orientations:  # Mirrors are valid
- 
+       x       x       x      x        x       x
     [1 1 1] [1 1 0] [1 0 0] [1 1 1] [1 1 0] [1 0 0] [1 1 1] [1 1 0] [1 0 0] [0 1 0] [0 0 0] [1 0 0] [0 0 0]  [0 0 0] [0 0 0] [0 0 0] [0 0 0]  
     [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [1 0 1] [0 0 0] [0 0 0]  [1 0 0] [1 0 0] [1 0 0] [1 0 0]
     [1 1 1] [1 1 1] [1 1 1] [1 1 0] [1 1 0] [1 1 0] [1 0 0] [1 0 0] [1 0 0] [0 1 0] [0 0 0] [0 0 1] [1 0 1]  [1 0 0] [0 1 0] [0 0 1] [1 1 1]
@@ -112,5 +156,7 @@ with open('3.test.txt', 'r') as fh:
             if schematic[y, x] in symbols:
                 gears_index.append((y, x))
 
-    for g in gears_index:
-        adjacent2(g[0], g[1], schematic)
+
+    generate_valids()
+    #for g in gears_index:
+    #    adjacent2(g[0], g[1], schematic)

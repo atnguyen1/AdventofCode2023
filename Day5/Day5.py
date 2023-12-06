@@ -49,7 +49,9 @@ with open('5.test.txt', 'r') as fh:
     for m in maps[::-1]:
         for ran in m[1]:
             dest, start, step = ran
-            print(dest, start, step)
+
+            if start > dest:   # mapping to go lower
+                small = 
 
         print(m)
         sys.exit()
