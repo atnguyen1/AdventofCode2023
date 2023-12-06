@@ -23,4 +23,4 @@ Need to calculate intervals
 
 Day 6:
 
-Gimme problem, super easy and can brute force, even though it's parabolas calculations.  Could have done half the work once you found the peak.
+Gimme problem, super easy and can brute force, even though it's parabolas calculations.  Could have done half the work once you found the peak.  Oh yeah, learned to use python's progressbar2 for fancy graphics.  https://medium.com/pythoniq/progress-bars-in-python-with-progressbar2-da77838077a9
