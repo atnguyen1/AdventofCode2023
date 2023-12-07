@@ -1,13 +1,37 @@
 import re
 import sys
 
+class Ranges():
+    def __init__(self, start, stride):
+        self.start = start
+        self.stride = stride
+        self.end = self.start + self.stride
+
+    def overlap(self, mappings):
+        for r in mappings:
+            if 
+        sys.exit()
+
+
+    def split(self, mappings):
+        # Given a mapping of a -> b
+        # determine if the range of chunks overlaps and if so split the ranges
+
+        for r in mappings[1]:
+            #if self.start < r[1] and  
+            print(r)
+
+    def __str__(self):
+        return 'RangeObj-' + str(self.start) + ':' + str(self.stride)
+
+
+
 with open('5.test.txt', 'r') as fh:
     data = fh.read().split('\n\n')
 
     seeds = [int(x) for x in data[0].split(':')[1].split()]
 
     maps = []
-
 
     for d in data[1:]:
         name, ran = d.split(':\n')
@@ -45,13 +69,18 @@ with open('5.test.txt', 'r') as fh:
 
     print('Part1:', results[0][-1][1])
 
-    # Part 2 work backwards
-    for m in maps[::-1]:
-        for ran in m[1]:
-            dest, start, step = ran
+    # Part 2
+    # Track by range chunks and not ints
 
-            if start > dest:   # mapping to go lower
-                small = 
+    seed_start = seeds[0::2]
+    seed_steps = seeds[1::2]
+    seed2 = [x for x in zip(seed_start, seed_steps)]
 
-        print(m)
-        sys.exit()
+    seed_ranges = []
+    for s in seed2:
+        a = Ranges(s[0], s[1])
+        seed_ranges.append(a)
+
+    for m in maps:
+        for seed in seed_ranges:
+            seed.overlap(m)
