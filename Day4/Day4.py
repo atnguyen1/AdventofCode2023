@@ -1,12 +1,13 @@
-from collections import DefaultDict
+
 import sys
 
-
-with open('4.test.txt', 'r') as fh:
+with open('4.input.txt', 'r') as fh:
     data = fh.readlines()
 
     cards = []
     first_pass = []
+    copy_counter = {}
+
     for z, d in enumerate(data, start=1):
         play, win = d.split('|')
         play = play.split(':')[1].rstrip().lstrip()
@@ -28,14 +29,21 @@ with open('4.test.txt', 'r') as fh:
 
         cards.append(score)
         first_pass.append((play, win, winning, score))
+        copy_counter[z] = 1
 
     print('Part 1:', sum(cards))
 
-    copy_counter = defaultdict(int)
-    copy_counter[1] = 1
     for z, f in enumerate(first_pass, start=1):
-        print(f)
-        for c in copy_counter[z]:
-            for x in range(z, f[2] + 1):
+        #print(f)
+        #print(copy_counter[z])
+        for repeat in range(0, copy_counter[z]):
+            for i in range(1, f[2] + 1):
+                copy_counter[z + i] += 1
+        #print(copy_counter)
 
+    #print(copy_counter)
+    sum_cards = 0
+    for k in copy_counter.keys():
+        sum_cards += copy_counter[k]
 
+    print('Part 2:', sum_cards)

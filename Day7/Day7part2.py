@@ -40,13 +40,13 @@ class Card():
         elif card == 'Q':
             self.value = 12
         elif card == 'J':
-            self.value = 11
+            self.value = 1
         elif card == 'T':
             self.value = 10
         else:
             self.value = int(card)
 
-        self.lookup = {10:'T', 11:'J', 12:'Q', 13:'K', 14:'A'}
+        self.lookup = {10:'T', 1:'J', 12:'Q', 13:'K', 14:'A'}
 
     def __lt__(self, card2):
         #print('LT2', self.value, card2.value)
@@ -68,13 +68,14 @@ class Card():
         return False
 
     def __str__(self):
-        if self.value < 10:
+        if self.value < 10 and self.value != 1:
             return str(self.value)
         else:
             return self.lookup[self.value]
 
     def __repr__(self):
         return 'Card:' + self.__str__()
+
 
 @total_ordering
 class Hand():
@@ -94,20 +95,62 @@ class Hand():
         self.common = count.most_common()
 
         self.type = None
-        if self.common[0][1] == 5:
-            self.type = 'Five of a Kind'
-        elif self.common[0][1] == 4:
-            self.type = 'Four of a Kind'
-        elif len(self.common) == 2 and self.common[0][1] == 3:
-            self.type = 'Full House'
-        elif self.common[0][1] == 3 and len(self.common) > 2:
-            self.type = 'Three of a Kind'
-        elif self.common[0][1] == 2 and self.common[1][1] == 2:
-            self.type = 'Two pair'
-        elif self.common[0][1] == 2 and len(self.common) == 4:
-            self.type = 'One pair'
+
+        if 'J' not in cards:
+            if self.common[0][1] == 5:
+                self.type = 'Five of a Kind'
+            elif self.common[0][1] == 4:
+                self.type = 'Four of a Kind'
+            elif len(self.common) == 2 and self.common[0][1] == 3:
+                self.type = 'Full House'
+            elif self.common[0][1] == 3 and len(self.common) > 2:
+                self.type = 'Three of a Kind'
+            elif self.common[0][1] == 2 and self.common[1][1] == 2:
+                self.type = 'Two pair'
+            elif self.common[0][1] == 2 and len(self.common) == 4:
+                self.type = 'One pair'
+            else:
+                self.type = 'High Card'
         else:
-            self.type = 'High Card'
+            for c in self.common:
+                if c[0].value == 1:
+                    J_counts = c[1]
+
+            #print(cards)
+            #print(count)
+            #print(self.common)
+            #print(J_counts)
+
+            match J_counts:
+                case 5 | 4:
+                    self.type = 'Five of a Kind'
+                case 3:
+                    if self.common[1][1] == 2:
+                        self.type = 'Five of a Kind'
+                    elif self.common[1][1] == 1:
+                        self.type = 'Four of a Kind'
+                case 2:
+                    if len(self.common) == 4:
+                        self.type = 'Three of a Kind'
+                    elif len(self.common) == 3:
+                        self.type = 'Four of a Kind'
+                    elif len(self.common) == 2:
+                        self.type = 'Five of a Kind'
+                    else:
+                        print('ERROR STATE 2 Jacks')
+                        sys.exit()
+
+                case 1:
+                    if len(self.common) == 5:
+                        self.type = 'One pair'
+                    elif len(self.common) == 4:
+                        self.type = 'Three of a Kind'
+                    elif len(self.common) == 3 and self.common[0][1] != 3:
+                        self.type = 'Full House'
+                    elif len(self.common) == 3 and self.common[0][1] == 3:
+                        self.type = 'Four of a Kind'
+                    elif len(self.common) == 2:
+                        self.type = 'Five of a Kind'
 
         #print(common, self.type)
 
@@ -148,11 +191,15 @@ def main():
 
     with open('7.input.txt', 'r') as fh:
         data = fh.read().split('\n')
+        #data = test3.split('\n')
 
         hands = []
         for d in data:
             new_hand = Hand(d)
             hands.append(new_hand)
+
+        for z, h in enumerate(hands, start=1):
+            print(z, h, h.rank, h.type)
 
         five = []
         four = []
@@ -161,6 +208,7 @@ def main():
         two = []
         one = []
         high = []
+
 
         for z in range(0, len(hands)):
             match hands[z].type:
@@ -188,6 +236,7 @@ def main():
         high = sorted(high)
 
         tricks = [high, one, two, three, full, four, five]
+        #print(tricks)
 
         z = 1
         for t in tricks:
@@ -196,9 +245,14 @@ def main():
                 z += 1
 
         total_sum = 0
-        for h in hands:
-            print(h, h.rank, h.bet, h.bet * h.rank)
-            total_sum += (h.rank * h.bet)
+        for z, h in enumerate(hands, start=1):
+            
+            try:
+                print(z, h, h.rank, h.bet, h.bet * h.rank)
+                total_sum += (h.rank * h.bet)
+            except:
+                print('Error', h.rank, h.bet)
+                sys.exit()
 
         print(total_sum)
         #print(five)
