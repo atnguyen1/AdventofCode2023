@@ -1,6 +1,7 @@
 import re
 import sys
 import numpy as np
+from collections import defaultdict
 
 symbols = ['*', '/', '@', '+', '-', '#', '&', '=', '%', '$']
 dirs = [-1, 0 , 1]
@@ -14,89 +15,16 @@ def adjacent(y, x, schematic):
 
     return False
 
-valids = []
-
-def generate_valids():
-    global valids
-    a = np.array([[1, 1, 1], [0, 0, 0], [1, 1, 1]], dtype=int)
-    valids.append(a)
-
-    b = np.array([[1, 1, 0], [0, 0, 0], [1, 1, 1]], dtype=int)
-    b1 = np.flip(b, 1)
-    b2 = np.flip(b, 0)
-    b3 = np.flip(b)
-    valids.append(b)
-    valids.append(b1)
-    valids.append(b2)
-    valids.append(b3)
-
-    c = np.array([[1, 0, 0], [0, 0, 0], [1, 1, 1]], dtype=int)
-    c1 = np.flip(c, 1)
-    c2 = np.flip(c, 0)
-    c3 = np.flip(c)
-    valids.append(c)
-    valids.append(c1)
-    valids.append(c2)
-    valids.append(c3)
-
-    d = np.array([[1, 1, 0], [0, 0, 0], [1, 1, 0]], dtype=int)
-    d1 = np.flip(d, 1)
-
-
-    valids.append(d)
-    valids.append(d1)
-
-    e = np.array([[1, 0, 0], [0, 0, 0], [1, 1, 0]], dtype=int)
-    e1 = np.flip(e, 1)
-    e2 = np.flip(e, 0)
-    e3 = np.flip(e)
-
-    #print(e)
-    #print(e1)
-    #print(e2)
-    #print(e3)
-
-
-
-def adjacent2(y, x, schematic):
-    '''
-    [1 0 0] [0 1 0]   [1 1 0]  [1 1 1]
-    [1 0 0] [1 0 0]   [1 0 0]  [1 0 0]
-    [0 0 0] [0 0 0]   [0 0 0]  [0 0 0]            if sum of set(rows) >= 3, then multiple touching
-
-    [1 1 1] [1 0 1]  [0 0 0]   [1 1 1]   [1 0 1]   [1 0 1] 
-    [0 0 0] [0 0 0]  [1 0 1]   [0 0 1]   [0 0 0]   [0 0 0]
-    [1 1 1] [0 0 0]  [0 0 0]   [0 0 0]   [1 0 0]   [1 0 1]
-
-Valid Orientations:  # Mirrors are valid
-       x       x       x      x        x       x
-    [1 1 1] [1 1 0] [1 0 0] [1 1 1] [1 1 0] [1 0 0] [1 1 1] [1 1 0] [1 0 0] [0 1 0] [0 0 0] [1 0 0] [0 0 0]  [0 0 0] [0 0 0] [0 0 0] [0 0 0]  
-    [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [0 0 0] [1 0 1] [0 0 0] [0 0 0]  [1 0 0] [1 0 0] [1 0 0] [1 0 0]
-    [1 1 1] [1 1 1] [1 1 1] [1 1 0] [1 1 0] [1 1 0] [1 0 0] [1 0 0] [1 0 0] [0 1 0] [0 0 0] [0 0 1] [1 0 1]  [1 0 0] [0 1 0] [0 0 1] [1 1 1]
-
-
-    '''
-    mask = np.zeros((3,3), dtype=int)
-    print(y, x, schematic[y, x])
-
+def get_gear(y, x, schematic):
     for d1 in dirs:
         for d2 in dirs:
-            if re.match('\d', schematic[y + d1, x + d2]):
-                mask[1 + d1,1 + d2] = 1
+            if schematic[y + d1, x + d2] in symbols:
+                #return True
+                return (y + d1, x + d2)
 
-    # More than two connections
-    print(mask)
-    row_sum = 0
-    for r in mask:
-        q = set(r)
-        row_sum += sum(q)
+    return None
 
-    print(row_sum)
-    sys.exit()
-
-
-
-with open('3.test.txt', 'r') as fh:
+with open('3.input.txt', 'r') as fh:
     data = fh.readlines()
 
     # Make Array and populate, pad with empty string
@@ -115,6 +43,7 @@ with open('3.test.txt', 'r') as fh:
     num_pos = []
     parts = []
     start = 0
+    gear_counter = defaultdict(list)
 
     for y in range(1, len(data) + 1):               # size of y
         for x in range(1, len(data[0])):            # newline counted
@@ -129,8 +58,10 @@ with open('3.test.txt', 'r') as fh:
             elif in_number and re.match('\D', schematic[y,x]):    # scanning digit and we found a non-digit, process
                 for n in num_pos:
                     adj = adjacent(n[1], n[2], schematic)
+                    gear_pos = get_gear(n[1], n[2], schematic)
                     if adj:
                         parts.append(int(''.join([x[0] for x in num_pos])))   # Adjacent
+                        gear_counter[gear_pos].append(int(''.join([x[0] for x in num_pos])))
                         break
 
                 in_number = False
@@ -138,8 +69,10 @@ with open('3.test.txt', 'r') as fh:
         if in_number:           # Tail case at edge of map
             for n in num_pos:
                 adj = adjacent(n[1], n[2], schematic)
+                gear_pos = get_gear(n[1], n[2], schematic)
                 if adj:
                     parts.append(int(''.join([x[0] for x in num_pos])))   # Adjacent
+                    gear_counter[gear_pos].append(int(''.join([x[0] for x in num_pos])))
                     break
 
             in_number = False
@@ -148,15 +81,12 @@ with open('3.test.txt', 'r') as fh:
     #print(parts)
     print('Part1 :', sum(parts))
 
-    # Part 2
+    sum_gear = 0
+    for key in gear_counter.keys():
+        nums = gear_counter[key]
+        if len(nums) == 2:
+            val = nums[0] * nums[1]
+            print(val)
+            sum_gear += val
 
-    gears_index = []
-    for y in range(1, len(data) + 1):
-        for x in range(1, len(data[0])):              # newline counted
-            if schematic[y, x] in symbols:
-                gears_index.append((y, x))
-
-
-    generate_valids()
-    #for g in gears_index:
-    #    adjacent2(g[0], g[1], schematic)
+    print(sum_gear)

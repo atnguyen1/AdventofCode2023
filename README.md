@@ -11,7 +11,8 @@ Mostly a Parsing problem, how well can you parse the input and keep track.  Use 
 
 Day 3:
 
-brute forcing part 2 as you can iterate the valid configurations
+brute forcing part 2 as you can iterate the valid configurations <- Dumb way to do it
+already parsed the numbers and know the numbers next to gear, just track the gears with exactly two numbers. Duh.
 
 Day 4:
 
@@ -33,5 +34,5 @@ Use classes that's it.  Straight forward
 
 Unfinished:
 
-Day 3 part 2, need to iterate through valid configs
+
 Day 5 part 2, need to write the range class to track ranges
