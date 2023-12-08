@@ -8,10 +8,7 @@ class Ranges():
         self.end = self.start + self.stride
 
     def overlap(self, mappings):
-        for r in mappings:
-            if 
-        sys.exit()
-
+        pass
 
     def split(self, mappings):
         # Given a mapping of a -> b
@@ -71,7 +68,7 @@ with open('5.test.txt', 'r') as fh:
 
     # Part 2
     # Track by range chunks and not ints
-
+ 
     seed_start = seeds[0::2]
     seed_steps = seeds[1::2]
     seed2 = [x for x in zip(seed_start, seed_steps)]
