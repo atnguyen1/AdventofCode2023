@@ -1,22 +1,6 @@
 import sys
 import re
 
-test = '''RL
-
-AAA = (BBB, CCC)
-BBB = (DDD, EEE)
-CCC = (ZZZ, GGG)
-DDD = (DDD, DDD)
-EEE = (EEE, EEE)
-GGG = (GGG, GGG)
-ZZZ = (ZZZ, ZZZ)'''
-
-test2 = '''LLR
-
-AAA = (BBB, BBB)
-BBB = (AAA, ZZZ)
-ZZZ = (ZZZ, ZZZ)'''
-
 test3 = '''LR
 
 11A = (11B, XXX)
@@ -47,6 +31,19 @@ class Node:
     def __repr__(self):
         return self.__str__()
 
+def endp(label):
+    if label[-1] == 'Z':
+        return True
+    return False
+
+def done(node_list):
+    doneyet = [endp(x.label) for x in node_list]
+    #print(doneyet)
+    if False in doneyet:
+        return False
+    else:
+        return True
+
 def main():
     with open('8.input.txt', 'r') as fh:
         instructions, data = fh.read().split('\n\n')
@@ -56,18 +53,64 @@ def main():
         for d in data.split('\n'):
             res = re.match('(\w{3}) = .(\w{3}), (\w{3}).', d)
             if res:
-                print(res.group(1), res.group(2), res.group(3))
+                #print(res.group(1), res.group(2), res.group(3))
 
                 node_connections[res.group(1)] = (res.group(2), res.group(3))
 
         nodes = {}
+        starts = []
+        stops = []
         for n in node_connections.keys():
-            nodes[n] = Node(n)
+            new_node = Node(n)
+            nodes[n] = new_node
+            if n[-1] == 'A':
+                starts.append(new_node)
+            if n[-1] == 'Z':
+                stops.append(new_node)
 
         for n in node_connections.keys():
-            nodes[n].set_left(nodes[node_connections[n][0]])   # Not a node object
+            nodes[n].set_left(nodes[node_connections[n][0]])
             nodes[n].set_right(nodes[node_connections[n][1]])
 
+        # Find Starts
+
+        steps = 0
+        instruction_start = 0
+        current_nodes = starts
+
+        #print(starts)
+        #print(stops)
+        #print(starts)
+        z = 0
+        done_steps = []
+        all_nodes = []
+        while len(done_steps) != len(starts):
+            next_nodes = []
+            for c in current_nodes:
+                if instructions[instruction_start % len(instructions)] == 'L':
+                    next_nodes.append(c.left)
+                elif instructions[instruction_start % len(instructions)] == 'R':
+                    next_nodes.append(c.right)
+            all_nodes.append([(x) for x in next_nodes])
+
+
+            #print(instructions[instruction_start % len(instructions)])
+            steps += 1
+            instruction_start += 1
+            current_nodes = next_nodes
+            
+            #print(current_nodes)
+            #if z >=2:
+            #    break
+            #z += 1
+
+        print(all_nodes)
+        #print(current_nodes)
+        print('Part 2 Steps', steps)
+
+
+
+        '''
         current_node = nodes['AAA']
         instruction_start = 0
         steps = 0
@@ -84,7 +127,7 @@ def main():
             instruction_start += 1
 
         print('Part1 Steps:', steps)
-
+        '''
 
 if __name__ == '__main__':
     main()
