@@ -1,5 +1,11 @@
 import sys
 import re
+import numpy as np
+
+# LCM
+# https://stackoverflow.com/questions/51716916/built-in-module-to-calculate-the-least-common-multiple
+
+from math import lcm
 
 test3 = '''LR
 
@@ -38,11 +44,6 @@ def endp(label):
 
 def done(node_list):
     doneyet = [endp(x.label) for x in node_list]
-    #print(doneyet)
-    if False in doneyet:
-        return False
-    else:
-        return True
 
 def main():
     with open('8.input.txt', 'r') as fh:
@@ -84,8 +85,17 @@ def main():
         z = 0
         done_steps = []
         all_nodes = []
-        while len(done_steps) != len(starts):
+
+        found_end = [0] * len(starts)
+        while 0 in found_end:
             next_nodes = []
+
+            d = [endp(x.label) for x in current_nodes]
+            if True in d:
+                en_i = d.index(True)
+                # Found an Endpoint
+                found_end[en_i] = (current_nodes[en_i], steps)
+
             for c in current_nodes:
                 if instructions[instruction_start % len(instructions)] == 'L':
                     next_nodes.append(c.left)
@@ -103,10 +113,17 @@ def main():
             #if z >=2:
             #    break
             #z += 1
+        print(found_end)
+        ends = [x[1] for x in found_end]
+        print(ends)
 
-        print(all_nodes)
+        print('Steps is LCM of all steps to get to endpoint:', lcm(*ends))
+
+
+        #print(all_nodes)
         #print(current_nodes)
-        print('Part 2 Steps', steps)
+        #print('Part 2 Steps', steps)
+
 
 
 
@@ -116,8 +133,7 @@ def main():
         steps = 0
         while current_node.label != 'ZZZ':
 
-            if instructions[instruction_start % len(instructions)] == 'L':
-                current_node = current_node.left
+            if instructions[instruction_start % len(instructions)] == 'L':                current_node = current_node.left
             elif instructions[instruction_start % len(instructions)] == 'R':
                 current_node = current_node.right
             else:
