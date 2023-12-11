@@ -30,6 +30,22 @@ Day 7:
 
 Use classes that's it.  Straight forward
 
+Day 8:
+
+Use Linked lists mostly.  Step 2, figure out distances of all starts A to stops Z and find Least common multiple of the distances.
+
+Day 9:
+
+Python list.append does all the work as well as [::-1]
+
+Day 10:
+
+Numpy abuse, need to implement ray tracing algorithm for each [y, x] count transitions between bounderies, odd = inside, even = outside we're in a closed loop.
+
+
+Day 11:
+
+Spent time implementing galaxy expansion with numpy and np.insert.  Threw it all away for part2 to just implement fancy manhatten distance.  Calculate crossings and then just subtract the crossings from abs(x1-x2) and multiply it by galaxy crossing expansion coefficient.
 
 
 Unfinished:
