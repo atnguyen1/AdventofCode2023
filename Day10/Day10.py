@@ -101,9 +101,15 @@ def main():
 		print('Part1:', len(pipe_loop), len(pipe_loop) / 2)
 
 		print(m_sparse)
+		in_out = np.full((len(data) + 2, len(data[0]) + 2), dtype=str, fill_value = '.')
+
+		
+
 		for y in range(1, len(data) + 1):
 			v = [1 if (y, x) in pipe_loop else 0 for x in range(1, len(data) + 1)]
-			print(v)
+
+			for x in range(1, len(data[0]) + 1):
+
 				
 				
 
