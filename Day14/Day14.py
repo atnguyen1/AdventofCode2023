@@ -42,31 +42,42 @@ def calc_load(platform):
                 l += (ymax - y)
     return l
 
-def spincycle(platform)
+def spincycle(platform):
     ymax,xmax = platform.shape
     roll = True
     state = np.copy(platform)
-    offsets {'N': (-1, 0), 'E': (0, -1), 'W': (0, 1), 'S': (1, 0)}
-
+    print(platform)
 
     while roll:
+        # North
+        #for y in range(1, ymax):
+        #    for x in range(0, xmax):
+        #        if platform[y, x] == 'O':
+        #            if platform[y - 1, x] == '.':
+        #                platform[y - 1, x] = 'O'
+        #                platform[y, x] = '.'
+        # West
         for y in range(0, ymax):
-            for x in range(0, xmax):
+            for x in range(xmax - 2, 0 - 1, -1):
                 if platform[y, x] == 'O':
-                    if platform[y - 1, x] == '.':
-                        platform[y - 1, x] = 'O'
+                    if platform[y , x + 1] == '.':
+                        platform[y, x + 1] = 'O'
                         platform[y, x] = '.'
+        #print(platform)
+        #sys.exit()                        
+
         if np.array_equal(state, platform):
             # If we rolled and state didnt' change break
             roll = False
         state = np.copy(platform)
 
+    print(platform)
     return platform
 
 def main():
     with open('14.input.txt', 'r') as fh:
-        data = fh.read().split('\n')
-        #data = test.split('\n')
+        #data = fh.read().split('\n')
+        data = test.split('\n')
 
         platform = []
         for d in data:
@@ -76,7 +87,7 @@ def main():
         end_roll = roll_north(platform)
         #print(end_roll)
         print('Part1:', calc_load(end_roll))
-
+        spincycle(platform)
 
 if __name__ == '__main__':
     main()
